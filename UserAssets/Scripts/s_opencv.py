@@ -52,7 +52,7 @@ def getFace(frame, shape):
         face = faces[0]
         x, y, w, h = face
         x = transform.scale.x * (x - (shape[1] / 2)) / 50
-        y = transform.scale.y * (y - (shape[0] / 2)) / 50
+        y = transform.scale.y * ((shape[0] / 2) - y) / 50
 
         return Vector3(x, y, -1)
     return None

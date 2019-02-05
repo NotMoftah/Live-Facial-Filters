@@ -279,15 +279,16 @@ class SpriteRenderer:
 
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
-        glVertex3f(-rx, -ry, 0)
-
-        glTexCoord2f(0, mul)
         glVertex3f(-rx, +ry, 0)
 
-        glTexCoord2f(mul, mul)
-        glVertex3f(+rx, +ry, 0)
+        glTexCoord2f(0, mul)
+        glVertex3f(-rx, -ry, 0)
 
+        glTexCoord2f(mul, mul)
         glVertex3f(+rx, -ry, 0)
+
+        glTexCoord2f(mul, 0)
+        glVertex3f(+rx, +ry, 0)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
@@ -340,16 +341,16 @@ class RawBytesSpriteRenderer:
 
         glBegin(GL_QUADS)
         glTexCoord2f(0, 0)
-        glVertex3f(-rx, -ry, 0)
-
-        glTexCoord2f(0, mul)
         glVertex3f(-rx, +ry, 0)
 
+        glTexCoord2f(0, mul)
+        glVertex3f(-rx, -ry, 0)
+
         glTexCoord2f(mul, mul)
-        glVertex3f(+rx, +ry, 0)
+        glVertex3f(+rx, -ry, 0)
 
         glTexCoord2f(mul, 0)
-        glVertex3f(+rx, -ry, 0)
+        glVertex3f(+rx, +ry, 0)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
