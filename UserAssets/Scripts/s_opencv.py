@@ -3,17 +3,20 @@ import numpy as np
 import cv2
 
 
-fc = None
 cap = None
 sprtie = None
-pointer = None
+fc, ec = None, None
+lv1, lv2 = None, None
 transform = Transform2D()
 
 
 def Start():
-    global fc, cap, sprtie, pointer
+    global fc, ec, lv1, lv2, cap, sprtie
 
-    pointer = instantiate_script('point')
+    lv1 = instantiate_script('point')
+    lv2 = instantiate_script('point')
+
+    ec = cv2.CascadeClassifier('UserAssets/Others/haarcascade_eye.xml')
     fc = cv2.CascadeClassifier('UserAssets/Others/haarcascade_frontalface.xml')
 
     cap = cv2.VideoCapture(0)
@@ -38,21 +41,34 @@ def Update():
         cv2.destroyAllWindows()
         quit()
 
-    if Input.KeyDown(' '):
-        position = getFace(frame, frame.shape)
-        if position:
-            pointer.transform.position = position
+    left, right = GetEyesLocation(frame, frame.shape)
+    if left and right:
+        lv1.transform.position = lerp(left,  lv1.transform.position, Time.deltaTime)
+        lv2.transform.position = lerp(right, lv2.transform.position, Time.deltaTime)
+    else:
+        lv1.transform.position = Vector3(0.1, -0.1, 10)
+        lv2.transform.position = Vector3(0.1, -0.1, 10)
 
 
-def getFace(frame, shape):
+
+def GetEyesLocation(frame, shape):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     faces = fc.detectMultiScale(gray, 1.3, 5)
 
     if len(faces) == 1:
         face = faces[0]
         x, y, w, h = face
-        x = transform.scale.x * (x - (shape[1] / 2)) / 50
-        y = transform.scale.y * ((shape[0] / 2) - y) / 50
+        face_bytes = gray[y:y+h, x:x+w]
 
-        return Vector3(x, y, -1)
-    return None
+        eyes = ec.detectMultiScale(face_bytes, 1.3, 5)
+
+        if len(eyes) == 2:
+            left_x = transform.scale.x * ((x + eyes[0][0] + eyes[0][2] / 2) - (shape[1] / 2)) / 50
+            left_y = transform.scale.y * ((shape[0] / 2) - (y + eyes[0][1] + eyes[0][3] / 2)) / 50
+
+            right_x = transform.scale.x * ((x + eyes[1][0] + eyes[1][2] / 2) - (shape[1] / 2)) / 50
+            right_y = transform.scale.y * ((shape[0] / 2) - (y + eyes[1][1] + eyes[1][3] / 2)) / 50
+
+            return Vector3(left_x, left_y, -1), Vector3(right_x, right_y, -1)
+
+    return None, None
