@@ -9,8 +9,8 @@
     -- Author : AbdElAziz Mofath
     -- Date: 4th of April 2018 at 7:40 PM
 """
+import cv2
 import math
-import pygame
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from UserAssets import Drawings
@@ -237,11 +237,11 @@ class SpriteRenderer:
         drawings_path = os.path.dirname(Drawings.__file__)
         sprite_path = drawings_path + '\\' + sprite_name
 
-        self._sprite = pygame.image.load(sprite_path)
-        self._sprite_width = self._sprite.get_width()
-        self._sprite_height = self._sprite.get_height()
+        self._sprite = cv2.imread(sprite_path, cv2.IMREAD_UNCHANGED)
+        self._sprite_width = self._sprite.shape[1]
+        self._sprite_height = self._sprite.shape[0]
 
-        self._sprite_data = pygame.image.tostring(self._sprite, "RGBA", 1)
+        self._sprite_data = bytes = cv2.cvtColor(self._sprite ,cv2.COLOR_BGRA2RGBA)
 
         self._sprite_text_id = glGenTextures(1)
 
@@ -287,7 +287,6 @@ class SpriteRenderer:
         glTexCoord2f(mul, mul)
         glVertex3f(+rx, +ry, 0)
 
-        glTexCoord2f(mul, 0)
         glVertex3f(+rx, -ry, 0)
         glEnd()
 
@@ -318,7 +317,7 @@ class RawBytesSpriteRenderer:
         """
         :return: the width and the height of the sprite
         """
-        return self._sprite_width / 100, self._sprite_height / 100
+        return self._sprite_width / 50, self._sprite_height / 50
 
     def update_bytes(self, sprite_bytes):
         glBindTexture(GL_TEXTURE_2D, self._sprite_text_id)
@@ -367,11 +366,12 @@ class Animation:
         drawings_path = os.path.dirname(Drawings.__file__)
         self.sprite_path = drawings_path + '\\' + sprite_name
 
-        self.sprite = pygame.image.load(self.sprite_path)
-        self.sprite_width = self.sprite.get_width()
-        self.sprite_height = self.sprite.get_height()
+        self._sprite = cv2.imread(sprite_path, cv2.IMREAD_UNCHANGED)
+        self._sprite_data = bytes = cv2.cvtColor(self._sprite ,cv2.COLOR_BGRA2RGBA)
+        self._sprite_width = self._sprite.shape[1]
+        self._sprite_height = self._sprite.shape[0]
 
-        self.sprite_data = pygame.image.tostring(self.sprite, "RGBA", 1)
+
         self.sprite_text_id = glGenTextures(1)
 
         glBindTexture(GL_TEXTURE_2D, self.sprite_text_id)

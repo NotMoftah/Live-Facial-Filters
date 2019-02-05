@@ -4,7 +4,6 @@
     -- Author : AbdElAziz Mofath
     -- Date: 4th of April 2018 at 7:00 PM
 """
-import pygame
 from OpenGL.GL import *
 from OpenGL.GLUT import *
 from Kernel import Time, Input, Camera, EventManager, Physics, DataBase
@@ -31,8 +30,6 @@ def __init():
         Typical OpenGL init function
     """
     glutInit()
-    pygame.init()
-    pygame.font.init()
     glutInitWindowSize(800, 600)
     glutCreateWindow(b'Game Engine')
     glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_WINDOW_DOUBLEBUFFER)
