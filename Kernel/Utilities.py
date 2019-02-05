@@ -242,6 +242,7 @@ class SpriteRenderer:
         self._sprite_height = self._sprite.get_height()
 
         self._sprite_data = pygame.image.tostring(self._sprite, "RGBA", 1)
+
         self._sprite_text_id = glGenTextures(1)
 
         glBindTexture(GL_TEXTURE_2D, self._sprite_text_id)
@@ -291,6 +292,69 @@ class SpriteRenderer:
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
+
+
+class RawBytesSpriteRenderer:
+    def __init__(self, sprite_bytes, shape, smooth=True):
+        """
+        :param sprite_name: the name of the sprite
+        """
+
+        self._sprite_width = shape[1]
+        self._sprite_height = shape[0]
+
+        self._sprite_text_id = glGenTextures(1)
+
+        glBindTexture(GL_TEXTURE_2D, self._sprite_text_id)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR if smooth else GL_NEAREST)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR if smooth else GL_NEAREST)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self._sprite_width, self._sprite_height, 0, GL_RGB, GL_UNSIGNED_BYTE, sprite_bytes)
+
+    def __del__(self):
+        glDeleteTextures(1, self._sprite_text_id)
+
+    @property
+    def size(self):
+        """
+        :return: the width and the height of the sprite
+        """
+        return self._sprite_width / 100, self._sprite_height / 100
+
+    def update_bytes(self, sprite_bytes):
+        glBindTexture(GL_TEXTURE_2D, self._sprite_text_id)
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, self._sprite_width, self._sprite_height, 0, GL_RGB, GL_UNSIGNED_BYTE, sprite_bytes)
+
+
+    def render(self, mul=1, brightness=1, color=Vector3(1, 1, 1)):
+        """
+            render the sprite at the origin.
+        """
+
+        glEnable(GL_TEXTURE_2D)
+
+        glBindTexture(GL_TEXTURE_2D, self._sprite_text_id)
+
+        rx = self._sprite_width / 100
+        ry = self._sprite_height / 100
+
+        glColor3f(color.x * brightness, color.y * brightness, color.z * brightness)
+
+        glBegin(GL_QUADS)
+        glTexCoord2f(0, 0)
+        glVertex3f(-rx, -ry, 0)
+
+        glTexCoord2f(0, mul)
+        glVertex3f(-rx, +ry, 0)
+
+        glTexCoord2f(mul, mul)
+        glVertex3f(+rx, +ry, 0)
+
+        glTexCoord2f(mul, 0)
+        glVertex3f(+rx, -ry, 0)
+        glEnd()
+
+        glDisable(GL_TEXTURE_2D)
+
 
 
 class Animation:
