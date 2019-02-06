@@ -367,10 +367,10 @@ class Animation:
         drawings_path = os.path.dirname(Drawings.__file__)
         self.sprite_path = drawings_path + '\\' + sprite_name
 
-        self._sprite = cv2.imread(sprite_path, cv2.IMREAD_UNCHANGED)
-        self._sprite_data = bytes = cv2.cvtColor(self._sprite ,cv2.COLOR_BGRA2RGBA)
-        self._sprite_width = self._sprite.shape[1]
-        self._sprite_height = self._sprite.shape[0]
+        self._sprite = cv2.imread(self.sprite_path, cv2.IMREAD_UNCHANGED)
+        self.sprite_data = bytes = cv2.cvtColor(self._sprite ,cv2.COLOR_BGRA2RGBA)
+        self.sprite_width = self._sprite.shape[1]
+        self.sprite_height = self._sprite.shape[0]
 
 
         self.sprite_text_id = glGenTextures(1)
@@ -381,7 +381,7 @@ class Animation:
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, self.sprite_width, self.sprite_height, 0,
                      GL_RGBA, GL_UNSIGNED_BYTE, self.sprite_data)
 
-        del self.sprite, self.sprite_data
+        del self._sprite, self.sprite_data
 
     def __frame_bounds(self, animate):
         step = 1 / self.size
@@ -414,16 +414,16 @@ class Animation:
 
         glBegin(GL_QUADS)
         glTexCoord2f(tx, 0)
-        glVertex3f(-rx, -ry, 0)
+        glVertex3f(-rx, +ry, 0)
 
         glTexCoord2f(ty, 0)
-        glVertex3f(rx, -ry, 0)
+        glVertex3f(rx, +ry, 0)
 
         glTexCoord2f(ty, 1)
-        glVertex3f(rx, ry, 0)
+        glVertex3f(rx, -ry, 0)
 
         glTexCoord2f(tx, 1)
-        glVertex3f(-rx, ry, 0)
+        glVertex3f(-rx, -ry, 0)
         glEnd()
 
         glDisable(GL_TEXTURE_2D)
