@@ -45,9 +45,6 @@ def Update():
     if left and right:
         lv1.transform.position = lerp(left,  lv1.transform.position, Time.deltaTime)
         lv2.transform.position = lerp(right, lv2.transform.position, Time.deltaTime)
-    else:
-        lv1.transform.position = Vector3(0.1, -0.1, 10)
-        lv2.transform.position = Vector3(0.1, -0.1, 10)
 
 
 
@@ -69,6 +66,8 @@ def GetEyesLocation(frame, shape):
             right_x = transform.scale.x * ((x + eyes[1][0] + eyes[1][2] / 2) - (shape[1] / 2)) / 50
             right_y = transform.scale.y * ((shape[0] / 2) - (y + eyes[1][1] + eyes[1][3] / 2)) / 50
 
-            return Vector3(left_x, left_y, -1), Vector3(right_x, right_y, -1)
+            if left_x < right_x:
+                return Vector3(left_x, left_y, -1), Vector3(right_x, right_y, -1)
+            return Vector3(right_x, right_y, -1), Vector3(left_x, left_y, -1)
 
     return None, None
