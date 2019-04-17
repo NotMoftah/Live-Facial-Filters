@@ -42,9 +42,14 @@ def Update():
         quit()
 
     left, right = GetEyesLocation(frame, frame.shape)
+
     if left and right:
         lv1.transform.position = lerp(left,  lv1.transform.position, Time.deltaTime)
         lv2.transform.position = lerp(right, lv2.transform.position, Time.deltaTime)
+    else:
+        lv1.transform.position = Vector3(0, 0, 10)
+        lv2.transform.position = Vector3(0, 0, 10)
+
 
 
 
